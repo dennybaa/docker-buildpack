@@ -1,0 +1,6 @@
+FROM {{ version|dist }}:{{ version|id }}
+
+RUN yum makecache && yum -y install \
+    ca-certificates \
+    curl \
+    wget
