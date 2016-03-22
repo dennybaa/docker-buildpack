@@ -1,6 +1,6 @@
 ---
 env:
-  image: rpm-buildpack
+  image: rpmbuildpack-deps
   registry: quay.io/dennybaa/
 datasources:
   - helper.py
