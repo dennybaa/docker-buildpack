@@ -1,0 +1,10 @@
+# Setup in CircleCI account the following ENV variables:
+# QUAY_ACCESS_TOKEN
+checkout:
+  pre:
+    - wget -qO- https://raw.githubusercontent.com/dennybaa/docker-citools/master/setup | sh -s -- --sudo-pip
+
+test:
+  override:
+    - git remote -v
+    - env
