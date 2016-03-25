@@ -14,7 +14,7 @@ Run, the following command:
 
 ```
 # depends on where your docker-citools is cloned
-# Mind that curl scm _default is the order required on build. 
+# Mind that curl scm _default is the order required on build.
 ~/docker-citools/docker-template.py -q -- curl scm _default | tee updated-dockerfiles
 ```
 
