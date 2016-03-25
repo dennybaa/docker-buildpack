@@ -8,14 +8,12 @@ This is a templated clone of https://github.com/docker-library/buildpack-deps. I
 
 First please install [docker-citools](https://github.com/dennybaa/docker-citools), which has `docker-template.py` update tool. As the repository cloned and installed, say it, to your home directory, we can use `docker-template.py` which will update **Dockerfiles**.
 
-The order is significant during later sequential build of containers, so we will write and preserve updated **Dockerfiles** list into `updated-dockerfiles` file. As soon commit happens, CirclCi will read this file and invoke build for the updated containers in the given order.
-
 Run, the following command:
 
 ```
 # depends on where your docker-citools is cloned
-# Mind that curl scm _default is the order required on build. 
-~/docker-citools/docker-template.py -q -- curl scm _default | tee updated-dockerfiles
+# Mind that curl scm _default is the order required on build.
+~/docker-citools/docker-template.py
 ```
 
 ## Commit and push changes
