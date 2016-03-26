@@ -1,10 +1,33 @@
-# Setup in CircleCI account the following ENV variables:
-# QUAY_ACCESS_TOKEN
+machine:
+  environment:
+    # QUAYIO_ACCESSTOKEN: access token is a hidden env variable
+    QUAYIO_REPO: stackstorm/rpmbuildpack-deps
+    QUAYIO_PULLROBOT: stackstorm+circleci
+    DOCKERFILE_BASE: "https://raw.githubusercontent.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}"
+
 checkout:
   pre:
     - wget -qO- https://raw.githubusercontent.com/dennybaa/docker-citools/master/setup | sh -s -- --sudo-pip
 
 test:
   override:
-    - git remote -v
-    - env
+    - |
+        # Get list of updated dockerfiles ordered by variant, since this ordered
+        # is important on build.
+        rev_diff=$(echo $CIRCLE_COMPARE_URL | sed 's/.*compare\///')
+        ~/docker-citools/git-updated-dockerfiles.py $rev_diff -- curl scm _default | tee ~/updated-dockerfiles
+
+deployment:
+  publish:
+    branch:
+      - master
+    owner: dennybaa
+    commands:
+      - |
+          # read ordered list of updated dockerfiles and initiate build in quay.io
+          cat ~/updated-dockerfiles | while read dockerfile; do
+            echo $dockerfile | IFS='/' read version variant _dockerfile
+            [ "$variant" = Dockerfile ] && tag="${version}" || tag="${version}-${variant}"  
+            url="${DOCKERFILE_BASE}/${dockerfile}"
+            ~/docker-citools/quayio/build.py -r ${QUAYIO_REPO} -t ${tag} -d ${url} -p ${QUAYIO_PULLROBOT}
+          done
