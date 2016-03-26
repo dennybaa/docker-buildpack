@@ -1,8 +1,16 @@
+[![Docker Repository on Quay](https://quay.io/repository/stackstorm/rpmbuildpack-deps/status "Docker Repository on Quay")](https://quay.io/repository/stackstorm/rpmbuildpack-deps)
+[![Circle CI](https://circleci.com/gh/dennybaa/docker-rpmbuildpack-deps.svg?style=shield)](https://circleci.com/gh/dennybaa/docker-rpmbuildpack-deps)
+
 # rpmbuildpack-deps
 
 This is a templated clone of https://github.com/docker-library/buildpack-deps. It uses absolutely the same tools and libraries as its counterpart, with the only difference that it is intended to build images for centos and fedora.
 
 # Automated containers build (quay.io)
+
+Build of docker images happens in two phases:
+
+ - First circle ci build happens, it actually doesn't perform any tests or builds itself, but rather just figures out which dockerfiles have been updated and handles build operation to Quay.io.
+ - Quay.io executes container builds. These builds happen in order (by variants) which is curl -> scm -> _default.
 
 ## Update Dockerfiles
 
@@ -11,8 +19,7 @@ First please install [docker-citools](https://github.com/dennybaa/docker-citools
 Run, the following command:
 
 ```
-# depends on where your docker-citools is cloned
-# Mind that curl scm _default is the order required on build.
+# Depends on where your docker-citools is cloned
 ~/docker-citools/docker-template.py
 ```
 

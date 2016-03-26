@@ -1,4 +1,4 @@
-FROM quay.io/dennybaa/rpmbuildpack-deps:fedora22-scm
+FROM quay.io/stackstorm/rpmbuildpack-deps:fedora22-scm
 
 RUN yum makecache && yum -y install \
     autoconf \

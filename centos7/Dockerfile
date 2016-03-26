@@ -1,4 +1,4 @@
-FROM quay.io/dennybaa/rpmbuildpack-deps:centos7-scm
+FROM quay.io/stackstorm/rpmbuildpack-deps:centos7-scm
 
 RUN yum makecache && yum -y install \
     autoconf \

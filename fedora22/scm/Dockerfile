@@ -1,4 +1,4 @@
-FROM quay.io/dennybaa/rpmbuildpack-deps:fedora22-curl
+FROM quay.io/stackstorm/rpmbuildpack-deps:fedora22-curl
 
 # procps is very common in build systems, and is a reasonably small package
 RUN yum makecache && yum -y install \

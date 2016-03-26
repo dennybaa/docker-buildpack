@@ -24,13 +24,11 @@ deployment:
     owner: dennybaa
     commands:
       - |
-          # Read of updated dockerfiles (in order) and initiate build in quay.io
+          # Read updated dockerfiles (ordered by variant) and initiate build in quay.io
           cat ~/updated-dockerfiles | while read dockerfile; do
             stripped="${dockerfile%/Dockerfile}/"
             version=${stripped%%/*}; variant=${stripped#*/} && variant=${variant%/};
             [ -z "$variant" ] && tag="${version}" || tag="${version}-${variant}"
             url="${DOCKERFILE_BASE}/${dockerfile}"
             ~/docker-citools/quayio/build.py -r ${QUAYIO_REPO} -t ${tag} -d ${url} -p ${QUAYIO_PULLROBOT}
-            # some artifical timeout, to place builds in order (without it they seem to be not ordred)
-            sleep 5
           done
