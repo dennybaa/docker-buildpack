@@ -27,18 +27,18 @@ test:
           EHD
       : parallel: true
 
-deployment:
-  publish:
-    branch:
-      - master
-    owner: dennybaa
-    commands:
-      - |
-          # Read updated dockerfiles (ordered by variant) and initiate build in quay.io
-          cat ~/updated-dockerfiles | while read dockerfile; do
-            stripped="${dockerfile%/Dockerfile}/"
-            version=${stripped%%/*}; variant=${stripped#*/} && variant=${variant%/};
-            [ -z "$variant" ] && tag="${version}" || tag="${version}-${variant}"
-            url="${DOCKERFILE_BASE}/${dockerfile}"
-            ~/docker-citools/quayio/build.py -r ${QUAYIO_REPO} -t ${tag} -d ${url} -p ${QUAYIO_PULLROBOT}
-          done
+# deployment:
+#   publish:
+#     branch:
+#       - master
+#     owner: dennybaa
+#     commands:
+#       - |
+#           # Read updated dockerfiles (ordered by variant) and initiate build in quay.io
+#           cat ~/updated-dockerfiles | while read dockerfile; do
+#             stripped="${dockerfile%/Dockerfile}/"
+#             version=${stripped%%/*}; variant=${stripped#*/} && variant=${variant%/};
+#             [ -z "$variant" ] && tag="${version}" || tag="${version}-${variant}"
+#             url="${DOCKERFILE_BASE}/${dockerfile}"
+#             ~/docker-citools/quayio/build.py -r ${QUAYIO_REPO} -t ${tag} -d ${url} -p ${QUAYIO_PULLROBOT}
+#           done
