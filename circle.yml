@@ -1,21 +1,31 @@
 machine:
   environment:
     # QUAYIO_ACCESSTOKEN: access token is a hidden env variable
-    QUAYIO_REPO: stackstorm/rpmbuildpack-deps
-    QUAYIO_PULLROBOT: stackstorm+circleci
-    DOCKERFILE_BASE: "https://raw.githubusercontent.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}"
+    # QUAYIO_REPO: stackstorm/rpmbuildpack-deps
+    # QUAYIO_PULLROBOT: stackstorm+circleci
+    # DOCKERFILE_BASE: "https://raw.githubusercontent.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}"
+    IMAGE: quay.io/stackstorm/rpmbuildpack-deps
+    DISTROS: centos6 centos7 fedora22 fedora23
+  services:
+    - docker
 
 checkout:
   pre:
-    - wget -qO- https://raw.githubusercontent.com/dennybaa/docker-citools/master/setup | sh -s -- --sudo-pip
+    - "git clone --depth 1 https://github.com/docker-library/official-images.git ~/official-images"
+    - "wget -qO- https://github.com/dennybaa/circle-helpers/raw/master/setup | sh -s"
+    # - "wget -qO- https://dennybaa/docker-citools/raw/master/setup | sh -s -- --sudo-pip"
 
 test:
   override:
-    - |
-        # Get list of updated dockerfiles ordered by variant, since this ordered
-        # is important on build!
-        rev_diff=$(echo $CIRCLE_COMPARE_URL | sed 's/.*compare\///')
-        ~/docker-citools/git-updated-dockerfiles.py $rev_diff -- curl scm _default | tee ~/updated-dockerfiles
+    - ? |
+          step dist in $DISTROS <<'EHD'
+            cd $dist
+            docker build -t "$IMAGE-curl" curl
+            docker build -t "$IMAGE-scm" scm
+            docker build -t "$IMAGE" .
+            ~/official-images/test/run.sh "$IMAGE"
+          EHD
+      : parallel: true
 
 deployment:
   publish:
