@@ -1,0 +1,32 @@
+language: bash
+services: docker
+
+env:
+  global:
+    - IMAGE=quay.io/stackstorm/rpmbuildpack-deps
+  matrix:
+    - VERSION=centos6
+    - VERSION=centos7
+    - VERSION=fedora22
+    - VERSION=fedora23
+
+install:
+  - git clone https://github.com/docker-library/official-images.git ~/official-images
+
+before_script:
+  - env | sort
+  - cd "$VERSION"
+  - export image="$IMAGE:$VERSION"
+
+script:
+  - test "$(head -n1 Dockerfile)" = "FROM $image-scm"
+    && test "$(head -n1 scm/Dockerfile)" = "FROM $image-curl"
+    && [[ "$(head -n1 curl/Dockerfile)" == 'FROM centos:'*
+       || "$(head -n1 curl/Dockerfile)" == 'FROM fedora:'* ]]
+  - docker build -t "$image-curl" curl
+  - docker build -t "$image-scm" scm
+  - docker build -t "$image" .
+  - ~/official-images/test/run.sh "$image"
+
+after_script:
+  - docker images
