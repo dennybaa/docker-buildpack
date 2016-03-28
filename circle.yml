@@ -19,12 +19,11 @@ test:
   override:
     - ? |
           step dist in $DISTROS <<'EHD'
-            cd $dist
-            docker build -t "$IMAGE-curl" curl
-            docker images "$IMAGE-curl"
-            docker build -t "$IMAGE-scm" scm
-            docker build -t "$IMAGE" .
-            ~/official-images/test/run.sh "$IMAGE"
+            cd $dist; image="$IMAGE:$dist";
+            docker build --rm=false -t "$image-curl" curl
+            docker build --rm=false -t "$image-scm" scm
+            docker build --rm=false -t "$image" .
+            ~/official-images/test/run.sh "$image"
           EHD
       : parallel: true
 
